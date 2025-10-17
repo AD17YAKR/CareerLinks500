@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import type { Company } from '../types/company'
-import { addCompany, searchCompanies } from '../services/companies'
+import { addCompany, searchCompanies, updateCompany } from '../services/companies'
 
 export function useCompanies() {
   const companies = ref<Company[]>([])
@@ -39,11 +39,30 @@ export function useCompanies() {
     }
   }
 
+  const update = async (id: number, companyData: { 
+    name: string
+    career_url: string
+    industry?: string
+    headquarters?: string
+  }) => {
+    loading.value = true
+    error.value = null
+    try {
+      const { error: updateError } = await updateCompany(id, companyData)
+      if (updateError) throw updateError
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'Update failed'
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     companies,
     loading,
     error,
     search,
-    add
+    add,
+    update
   }
 }

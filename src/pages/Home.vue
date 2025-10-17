@@ -27,7 +27,7 @@
       <div class="container">
         <section v-show="activeSection === 'search'" class="section">
           <SearchBar @search="handleSearch" />
-          <CompanyList :companies="companies" :loading="loading" />
+          <CompanyList :companies="companies" :loading="loading" @update="handleUpdate" />
         </section>
 
         <section v-show="activeSection === 'add'" class="section">
@@ -50,7 +50,7 @@ import AddCompanyForm from '../components/AddCompanyForm.vue'
 import SearchBar from '../components/SearchBar.vue'
 import CompanyList from '../components/CompanyList.vue'
 
-const { companies, loading, error, search, add } = useCompanies()
+const { companies, loading, error, search, add, update } = useCompanies()
 
 const activeSection = ref('search')
 
@@ -62,6 +62,13 @@ const handleAdd = async (data: { name: string; career_url: string; industry?: st
   await add(data)
   if (!error.value) {
     activeSection.value = 'search'
+    search('')
+  }
+}
+
+const handleUpdate = async (id: number, data: { name: string; career_url: string; industry?: string; headquarters?: string }) => {
+  await update(id, data)
+  if (!error.value) {
     search('')
   }
 }

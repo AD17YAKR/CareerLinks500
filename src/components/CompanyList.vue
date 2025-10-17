@@ -15,20 +15,41 @@
         :key="company.id"
         :class="viewMode === 'list' ? 'company-row' : 'company-card'"
       >
-        <div class="company-info">
-          <h4>{{ company.name }}</h4>
-          <p v-if="company.industry" class="company-industry">{{ company.industry }}</p>
-          <p v-if="company.headquarters" class="company-location">{{ company.headquarters }}</p>
+        <div v-if="editingId === company.id" class="edit-form">
+          <input v-model="editForm.name" placeholder="Company name" class="edit-input" />
+          <input v-model="editForm.career_url" placeholder="Career URL" class="edit-input" />
+          <input v-model="editForm.industry" placeholder="Industry" class="edit-input" />
+          <input v-model="editForm.headquarters" placeholder="Headquarters" class="edit-input" />
+          <div class="edit-actions">
+            <button @click="saveEdit(company.id)" class="save-btn">Save</button>
+            <button @click="cancelEdit" class="cancel-btn">Cancel</button>
+          </div>
         </div>
-        <a :href="company.career_url" target="_blank" class="career-link">
-          View Careers
-        </a>
+        <div v-else class="company-content">
+          <div class="company-info">
+            <h4>{{ company.name }}</h4>
+            <p v-if="company.industry" class="company-industry">{{ company.industry }}</p>
+            <p v-if="company.headquarters" class="company-location">{{ company.headquarters }}</p>
+          </div>
+          <div class="company-actions">
+            <button @click="startEdit(company)" class="edit-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m18 2 4 4-14 14H4v-4L18 2z"/>
+                <path d="M14.5 5.5 18.5 9.5"/>
+              </svg>
+            </button>
+            <a :href="company.career_url" target="_blank" class="career-link">
+              View Careers
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import type { Company } from '../types/company'
 
 defineProps<{
@@ -37,13 +58,30 @@ defineProps<{
   viewMode: 'list' | 'cards'
 }>()
 
-const formatUrl = (url: string) => {
-  try {
-    const domain = new URL(url).hostname
-    return domain.replace('www.', '')
-  } catch {
-    return url
+const emit = defineEmits<{
+  update: [id: number, data: { name: string; career_url: string; industry?: string; headquarters?: string }]
+}>()
+
+const editingId = ref<number | null>(null)
+const editForm = ref({ name: '', career_url: '', industry: '', headquarters: '' })
+
+const startEdit = (company: Company) => {
+  editingId.value = company.id
+  editForm.value = {
+    name: company.name,
+    career_url: company.career_url,
+    industry: company.industry || '',
+    headquarters: company.headquarters || ''
   }
+}
+
+const saveEdit = (id: number) => {
+  emit('update', id, editForm.value)
+  editingId.value = null
+}
+
+const cancelEdit = () => {
+  editingId.value = null
 }
 </script>
 
@@ -202,5 +240,101 @@ const formatUrl = (url: string) => {
   background: linear-gradient(135deg, #15803d, #16a34a);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
+}
+
+.company-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.company-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.edit-btn {
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  padding: 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.edit-btn:hover {
+  background: var(--primary-light);
+  transform: translateY(-1px);
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.edit-input {
+  padding: 0.5rem;
+  border: 1px solid var(--gray-300);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  background: var(--white);
+}
+
+.edit-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+.edit-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.save-btn {
+  background: var(--success);
+  color: var(--white);
+  border: none;
+  padding: 0.375rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.cancel-btn {
+  background: var(--gray-500);
+  color: var(--white);
+  border: none;
+  padding: 0.375rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .company-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+  
+  .edit-actions {
+    flex-direction: column;
+  }
 }
 </style>

@@ -33,3 +33,12 @@ export async function getAllCompanies() {
     .select('*')
     .order('name')
 }
+
+export async function updateCompany(id: number, data: { 
+  name: string
+  career_url: string
+  industry?: string
+  headquarters?: string
+}) {
+  return supabase.from('companies').update(data).eq('id', id)
+}
