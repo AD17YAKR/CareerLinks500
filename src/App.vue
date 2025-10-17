@@ -29,6 +29,7 @@
 <style>
 :root {
   --primary: #2563eb;
+  --primary-light: #3b82f6;
   --success: #16a34a;
   --white: #ffffff;
   --black: #000000;
@@ -41,6 +42,10 @@
   --gray-900: #0f172a;
   --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+  --gradient-bg: linear-gradient(135deg, #ffffff 0%, #f1f5f9 50%, #e2e8f0 100%);
+  --glass-bg: rgba(255, 255, 255, 0.95);
+  --glass-border: rgba(255, 255, 255, 0.2);
 }
 
 * {
@@ -50,9 +55,10 @@
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  background: var(--gray-50);
+  background: var(--gradient-bg);
   color: var(--gray-900);
   line-height: 1.6;
+  min-height: 100vh;
 }
 
 #app {
@@ -70,9 +76,10 @@ input:focus {
 }
 
 .header {
-  background: var(--white);
-  border-bottom: 1px solid var(--gray-200);
-  box-shadow: var(--shadow);
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-lg);
 }
 
 .container {
@@ -108,23 +115,27 @@ input:focus {
 
 .nav-link {
   padding: 0.5rem 1rem;
-  border: 1px solid var(--gray-300);
-  background: var(--white);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(5px);
   color: var(--gray-700);
-  border-radius: 6px;
+  border-radius: 8px;
   text-decoration: none;
   font-weight: 500;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
 }
 
 .nav-link:hover {
-  background: var(--gray-50);
+  background: var(--white);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 .nav-link.router-link-active {
-  background: var(--primary);
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
   color: var(--white);
   border-color: var(--primary);
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
 }
 
 .main {

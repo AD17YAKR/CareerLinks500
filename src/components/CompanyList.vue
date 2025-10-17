@@ -9,11 +9,11 @@
       <p>No companies found</p>
     </div>
     
-    <div v-else class="companies-grid">
+    <div v-else :class="viewMode === 'list' ? 'companies-list' : 'companies-grid'">
       <div
         v-for="company in companies"
         :key="company.id"
-        class="company-card"
+        :class="viewMode === 'list' ? 'company-row' : 'company-card'"
       >
         <div class="company-info">
           <h4>{{ company.name }}</h4>
@@ -34,6 +34,7 @@ import type { Company } from '../types/company'
 defineProps<{
   companies: Company[]
   loading: boolean
+  viewMode: 'list' | 'cards'
 }>()
 
 const formatUrl = (url: string) => {
@@ -75,28 +76,62 @@ const formatUrl = (url: string) => {
   to { transform: rotate(360deg); }
 }
 
+@media (max-width: 768px) {
+  .companies-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .company-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+}
+
 .companies-grid {
   display: grid;
   gap: 1rem;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
 
+.companies-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .company-card {
-  background: var(--white);
-  border: 1px solid var(--gray-200);
-  border-radius: 8px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
   padding: 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-lg);
+}
+
+.company-row {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
   box-shadow: var(--shadow);
 }
 
-.company-card:hover {
+.company-card:hover,
+.company-row:hover {
   border-color: var(--primary);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  background: var(--white);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(37, 99, 235, 0.15);
 }
 
 .company-info {
@@ -110,10 +145,25 @@ const formatUrl = (url: string) => {
   font-weight: 600;
 }
 
+.company-row .company-info h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+}
+
 .company-industry {
   margin: 0 0 0.25rem 0;
   color: var(--gray-700);
   font-size: 0.875rem;
+}
+
+.company-row .company-industry {
+  margin: 0;
+  display: inline;
+}
+
+.company-row .company-industry::before {
+  content: ' • ';
+  color: var(--gray-400);
 }
 
 .company-location {
@@ -122,19 +172,35 @@ const formatUrl = (url: string) => {
   font-size: 0.875rem;
 }
 
+.company-row .company-location {
+  display: inline;
+}
+
+.company-row .company-location::before {
+  content: ' • ';
+  color: var(--gray-400);
+}
+
 .career-link {
-  background: var(--success);
+  background: linear-gradient(135deg, var(--success), #22c55e);
   color: var(--white);
   text-decoration: none;
   font-weight: 500;
   padding: 0.5rem 1rem;
-  border-radius: 6px;
-  transition: all 0.2s;
+  border-radius: 8px;
+  transition: all 0.3s ease;
   white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+}
+
+.company-row .career-link {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
 }
 
 .career-link:hover {
-  background: #15803d;
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, #15803d, #16a34a);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
 }
 </style>

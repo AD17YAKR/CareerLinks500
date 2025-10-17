@@ -77,9 +77,10 @@ onMounted(() => {
 }
 
 .header {
-  background: var(--white);
-  border-bottom: 1px solid var(--gray-200);
-  box-shadow: var(--shadow);
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-lg);
 }
 
 .container {
@@ -115,23 +116,27 @@ onMounted(() => {
 
 .nav-btn {
   padding: 0.5rem 1rem;
-  border: 1px solid var(--gray-300);
-  background: var(--white);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(5px);
   color: var(--gray-700);
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: 500;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
 }
 
 .nav-btn:hover {
-  background: var(--gray-50);
+  background: var(--white);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 .nav-btn.active {
-  background: var(--primary);
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
   color: var(--white);
   border-color: var(--primary);
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
 }
 
 .main {
@@ -139,10 +144,18 @@ onMounted(() => {
 }
 
 .section {
-  background: var(--white);
-  border-radius: 8px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
   padding: 2rem;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-xl);
+  transition: all 0.3s ease;
+}
+
+.section:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
 }
 
 @media (max-width: 768px) {

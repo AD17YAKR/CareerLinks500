@@ -120,10 +120,12 @@ const onSubmit = () => {
 }
 
 .add-form {
-  background: var(--gray-50);
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
   padding: 2rem;
-  border-radius: 8px;
-  border: 1px solid var(--gray-200);
+  border-radius: 16px;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-lg);
 }
 
 .form-group {
@@ -139,35 +141,41 @@ const onSubmit = () => {
 
 .form-input {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--gray-300);
-  border-radius: 6px;
+  padding: 0.875rem;
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
   font-size: 1rem;
-  background: var(--white);
-  transition: border-color 0.2s;
+  background: var(--glass-bg);
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
 }
 
 .form-input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  background: var(--white);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15), 0 4px 12px rgba(37, 99, 235, 0.1);
+  transform: translateY(-1px);
 }
 
 .submit-btn {
   width: 100%;
-  background: var(--success);
+  background: linear-gradient(135deg, var(--success), #22c55e);
   color: var(--white);
   border: none;
-  padding: 0.875rem 1.5rem;
-  border-radius: 6px;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 1rem;
-  font-weight: 500;
-  transition: background-color 0.2s;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
 }
 
 .submit-btn:hover:not(:disabled) {
-  background: #15803d;
+  background: linear-gradient(135deg, #15803d, #16a34a);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
 }
 
 .submit-btn:disabled {
@@ -177,11 +185,13 @@ const onSubmit = () => {
 
 .error-message {
   color: #dc2626;
-  background: #fef2f2;
+  background: rgba(254, 242, 242, 0.9);
+  backdrop-filter: blur(5px);
   border: 1px solid #fecaca;
-  border-radius: 6px;
-  padding: 0.75rem;
+  border-radius: 10px;
+  padding: 0.875rem;
   margin-top: 1rem;
   font-size: 0.875rem;
+  box-shadow: var(--shadow);
 }
 </style>

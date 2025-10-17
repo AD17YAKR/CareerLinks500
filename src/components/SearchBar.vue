@@ -38,6 +38,7 @@ const onSearch = () => {
   position: relative;
   max-width: 500px;
   margin: 0 auto;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
 }
 
 .search-icon {
@@ -52,16 +53,20 @@ const onSearch = () => {
 
 .search-input {
   width: 100%;
-  padding: 0.75rem 1rem 0.75rem 3rem;
-  border: 1px solid var(--gray-300);
-  border-radius: 6px;
+  padding: 1rem 1rem 1rem 3rem;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
   font-size: 1rem;
-  background: var(--white);
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
 }
 
 .search-input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  background: var(--white);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15), 0 8px 25px rgba(37, 99, 235, 0.1);
+  transform: translateY(-2px);
 }
 </style>
