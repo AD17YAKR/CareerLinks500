@@ -194,36 +194,41 @@ const cancelEdit = () => {
 .companies-list {
   display: flex;
   flex-direction: column;
-  gap: 1px;
-  background: var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
+  gap: 8px;
+  background: transparent;
 }
 
 .company-card {
   background: var(--bg-primary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-  transition: all 0.2s;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-large);
+  padding: 24px;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow);
 }
 
 .company-row {
   background: var(--bg-primary);
-  padding: 16px 20px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-large);
+  padding: 20px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow);
 }
 
 .company-card:hover {
-  border-color: var(--primary);
+  border-color: var(--primary-light);
   box-shadow: var(--shadow-hover);
+  transform: translateY(-1px);
 }
 
 .company-row:hover {
-  background: var(--bg-hover);
+  border-color: var(--primary-light);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-1px);
 }
 
 .company-content {
@@ -240,11 +245,12 @@ const cancelEdit = () => {
 }
 
 .company-name {
-  margin: 0 0 8px 0;
+  margin: 0 0 10px 0;
   color: var(--text-primary);
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
   line-height: 1.3;
+  letter-spacing: -0.01em;
 }
 
 .company-row .company-name {
@@ -282,10 +288,10 @@ const cancelEdit = () => {
   background: var(--bg-secondary);
   color: var(--text-secondary);
   border: 1px solid var(--border);
-  padding: 6px;
+  padding: 8px;
   border-radius: var(--radius);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -305,10 +311,10 @@ const cancelEdit = () => {
   background: var(--bg-secondary);
   color: var(--text-secondary);
   border: 1px solid var(--border);
-  padding: 6px;
+  padding: 8px;
   border-radius: var(--radius);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -330,11 +336,12 @@ const cancelEdit = () => {
   color: white;
   text-decoration: none;
   font-weight: 500;
-  padding: 8px 16px;
+  padding: 10px 18px;
   border-radius: var(--radius);
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   white-space: nowrap;
   font-size: 14px;
+  box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2);
 }
 
 .company-row .career-link {
@@ -344,6 +351,8 @@ const cancelEdit = () => {
 
 .career-link:hover {
   background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(22, 163, 74, 0.3);
 }
 
 .edit-form {
@@ -364,7 +373,7 @@ const cancelEdit = () => {
 .edit-input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
+  box-shadow: var(--shadow-focus);
 }
 
 .edit-actions {

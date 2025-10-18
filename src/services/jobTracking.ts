@@ -2,7 +2,8 @@ import { supabase } from './supabaseClient'
 import type { JobApplication, JobStatus } from '../types/jobTracking'
 
 export async function addJobApplication(data: {
-  company_id: number
+  user_id: string
+  company_id: string
   status: JobStatus
   position?: string
   notes?: string

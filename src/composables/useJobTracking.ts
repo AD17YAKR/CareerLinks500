@@ -22,7 +22,8 @@ export function useJobTracking() {
   }
 
   const addApplication = async (data: {
-    company_id: number
+    user_id: string
+    company_id: string
     status: JobStatus
     position?: string
     notes?: string

@@ -1,7 +1,7 @@
 export interface JobApplication {
   id: number
   user_id: string
-  company_id: number
+  company_id: string
   status: 'seeking_referral' | 'referred_not_applied' | 'referred_and_applied' | 'applied' | 'interviewing' | 'offer' | 'rejected' | 'withdrawn'
   position?: string
   notes?: string

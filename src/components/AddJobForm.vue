@@ -138,7 +138,8 @@ const handleSubmit = async () => {
   
   try {
     await addApplication({
-      company_id: parseInt(form.value.companyId),
+      user_id: user.value.id,
+      company_id: form.value.companyId,
       status: form.value.status,
       position: form.value.position || undefined,
       notes: form.value.notes || undefined,
