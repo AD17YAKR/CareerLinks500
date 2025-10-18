@@ -16,6 +16,14 @@
           Cards
         </button>
       </div>
+      <CompanyControls 
+        :current-page="currentPage"
+        :total-count="totalCount"
+        :sort-by="sortBy"
+        :sort-order="sortOrder"
+        @sort="handleSort"
+        @page="handlePageChange"
+      />
       <CompanyList :companies="companies" :loading="loading" :view-mode="viewMode" />
     </div>
   </div>
@@ -26,12 +34,24 @@ import { onMounted, ref } from 'vue'
 import { useCompanies } from '../composables/useCompanies'
 import SearchBar from '../components/SearchBar.vue'
 import CompanyList from '../components/CompanyList.vue'
+import CompanyControls from '../components/CompanyControls.vue'
 
-const { companies, loading, search } = useCompanies()
+const { companies, loading, search, totalCount, currentPage, sortBy, sortOrder, setSorting } = useCompanies()
 const viewMode = ref('list')
+const currentQuery = ref('')
 
 const handleSearch = (query: string) => {
+  currentQuery.value = query
   search(query)
+}
+
+const handleSort = (field: string, order: 'asc' | 'desc') => {
+  setSorting(field, order)
+  search(currentQuery.value, 1)
+}
+
+const handlePageChange = (page: number) => {
+  search(currentQuery.value, page)
 }
 
 onMounted(() => {

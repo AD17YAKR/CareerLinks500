@@ -27,7 +27,15 @@
       <div class="container">
         <section v-show="activeSection === 'search'" class="section">
           <SearchBar @search="handleSearch" />
-          <CompanyList :companies="companies" :loading="loading" @update="handleUpdate" />
+          <CompanyControls 
+            :current-page="currentPage" 
+            :total-count="totalCount" 
+            :sort-by="sortBy" 
+            :sort-order="sortOrder"
+            @sort="handleSort" 
+            @page="handlePage" 
+          />
+          <CompanyList :companies="companies" :loading="loading" view-mode="list" @update="handleUpdate" />
         </section>
 
         <section v-show="activeSection === 'add'" class="section">
@@ -49,13 +57,26 @@ import { useCompanies } from '../composables/useCompanies'
 import AddCompanyForm from '../components/AddCompanyForm.vue'
 import SearchBar from '../components/SearchBar.vue'
 import CompanyList from '../components/CompanyList.vue'
+import CompanyControls from '../components/CompanyControls.vue'
 
-const { companies, loading, error, search, add, update } = useCompanies()
+const { companies, loading, error, totalCount, currentPage, sortBy, sortOrder, search, add, update, setSorting } = useCompanies()
 
 const activeSection = ref('search')
 
+const currentQuery = ref('')
+
 const handleSearch = (query: string) => {
-  search(query)
+  currentQuery.value = query
+  search(query, 1)
+}
+
+const handleSort = (field: string, order: 'asc' | 'desc') => {
+  setSorting(field, order)
+  search(currentQuery.value, 1)
+}
+
+const handlePage = (page: number) => {
+  search(currentQuery.value, page)
 }
 
 const handleAdd = async (data: { name: string; career_url: string; industry?: string; headquarters?: string }) => {
@@ -69,12 +90,12 @@ const handleAdd = async (data: { name: string; career_url: string; industry?: st
 const handleUpdate = async (id: number, data: { name: string; career_url: string; industry?: string; headquarters?: string }) => {
   await update(id, data)
   if (!error.value) {
-    search('')
+    search(currentQuery.value, currentPage.value)
   }
 }
 
 onMounted(() => {
-  search('')
+  search('', 1)
 })
 </script>
 

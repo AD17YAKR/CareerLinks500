@@ -10,21 +10,17 @@ export async function addCompany(c: {
   return supabase.from('companies').insert(c)
 }
 
-export async function searchCompanies(q: string) {
-  if (!q.trim()) {
-    return supabase
-      .from('companies')
-      .select('*')
-      .order('name')
-      .limit(50)
+export async function searchCompanies(q: string, sortBy = 'name', sortOrder = 'asc', page = 1, limit = 20) {
+  const from = (page - 1) * limit
+  const to = from + limit - 1
+  
+  let query = supabase.from('companies').select('*', { count: 'exact' })
+  
+  if (q.trim()) {
+    query = query.or(`name.ilike.%${q}%,industry.ilike.%${q}%,headquarters.ilike.%${q}%`)
   }
   
-  return supabase
-    .from('companies')
-    .select('*')
-    .or(`name.ilike.%${q}%,industry.ilike.%${q}%,headquarters.ilike.%${q}%`)
-    .order('name')
-    .limit(50)
+  return query.order(sortBy, { ascending: sortOrder === 'asc' }).range(from, to)
 }
 
 export async function getAllCompanies() {
