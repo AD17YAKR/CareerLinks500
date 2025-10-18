@@ -38,6 +38,15 @@
             </div>
           </div>
           <div class="company-actions">
+            <button v-if="isAuthenticated" @click="toggleJobTracking(company)" class="track-btn" :title="isTracked(company.id) ? 'Remove from tracking' : 'Track this company'">
+              <svg v-if="isTracked(company.id)" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+              </svg>
+              <svg v-else viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
+                <path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 010-1.186A10.004 10.004 0 0110 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0110 17c-4.257 0-7.893-2.66-9.336-6.41zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+              </svg>
+            </button>
             <button @click="startEdit(company)" class="edit-btn" title="Edit company">
               <svg viewBox="0 0 20 20" fill="currentColor">
                 <path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z" />
@@ -55,7 +64,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useAuth } from '../composables/useAuth'
+import { useJobTracking } from '../composables/useJobTracking'
 import type { Company } from '../types/company'
 
 defineProps<{
@@ -67,6 +78,41 @@ defineProps<{
 const emit = defineEmits<{
   update: [id: number, data: { name: string; career_url: string; industry?: string; headquarters?: string }]
 }>()
+
+const { user, isAuthenticated } = useAuth()
+const { applications, loadApplications, addApplication, deleteApplication } = useJobTracking()
+
+const trackedCompanyIds = computed(() => 
+  applications.value.map(app => app.company_id)
+)
+
+const isTracked = (companyId: number) => {
+  return trackedCompanyIds.value.includes(companyId)
+}
+
+const toggleJobTracking = async (company: Company) => {
+  if (!user.value) return
+  
+  if (isTracked(company.id)) {
+    const application = applications.value.find(app => app.company_id === company.id)
+    if (application) {
+      await deleteApplication(application.id)
+    }
+  } else {
+    await addApplication({
+      company_id: company.id,
+      status: 'seeking_referral'
+    })
+  }
+  
+  await loadApplications(user.value.id)
+}
+
+onMounted(() => {
+  if (user.value) {
+    loadApplications(user.value.id)
+  }
+})
 
 const editingId = ref<number | null>(null)
 const editForm = ref({ name: '', career_url: '', industry: '', headquarters: '' })
@@ -253,6 +299,30 @@ const cancelEdit = () => {
 .edit-btn:hover {
   background: var(--bg-hover);
   color: var(--text-primary);
+}
+
+.track-btn {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  padding: 6px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.track-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.track-btn:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
 }
 
 .career-link {

@@ -2,12 +2,18 @@
   <div id="app">
     <header class="header">
       <div class="container">
-        <router-link to="/search" class="logo">
+        <router-link to="/" class="logo">
           <h1>CareerLinks500</h1>
         </router-link>
         <nav class="nav">
-          <router-link to="/search" class="nav-link">Companies</router-link>
-          <router-link to="/add" class="nav-link">Add Company</router-link>
+          <router-link to="/" class="nav-link">Companies</router-link>
+          <router-link v-if="isAuthenticated" to="/jobs" class="nav-link">My Jobs</router-link>
+          <router-link v-if="isAuthenticated" to="/add" class="nav-link">Add Company</router-link>
+          <div v-if="isAuthenticated" class="user-menu">
+            <span class="user-email">{{ user?.email }}</span>
+            <button @click="handleSignOut" class="sign-out-btn">Sign Out</button>
+          </div>
+          <router-link v-else to="/auth" class="nav-link auth-link">Sign In</router-link>
         </nav>
       </div>
     </header>
@@ -19,6 +25,21 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuth } from './composables/useAuth'
+
+const router = useRouter()
+const { user, isAuthenticated, signOut, initAuth } = useAuth()
+
+const handleSignOut = async () => {
+  await signOut()
+  router.push('/')
+}
+
+onMounted(() => {
+  initAuth()
+})
 </script>
 
 <style>
@@ -84,6 +105,7 @@ input:focus {
 .nav {
   display: flex;
   gap: 24px;
+  align-items: center;
 }
 
 .nav-link {
@@ -103,6 +125,46 @@ input:focus {
   border-bottom: 2px solid var(--primary);
 }
 
+.auth-link {
+  background: var(--primary);
+  color: white !important;
+  padding: 8px 16px !important;
+  border-radius: var(--radius);
+  transition: all 0.2s;
+}
+
+.auth-link:hover {
+  background: var(--primary-hover);
+  color: white !important;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-email {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.sign-out-btn {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.sign-out-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
 .main {
   padding: 40px 0;
 }
@@ -113,6 +175,18 @@ input:focus {
     flex-direction: column;
     gap: 16px;
     padding: 16px 20px;
+  }
+  
+  .nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+  }
+  
+  .user-menu {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
   }
   
   .main {

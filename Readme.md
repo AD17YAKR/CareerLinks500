@@ -6,11 +6,15 @@
 
 - **🔍 Smart Search** - Search companies by name, industry, or headquarters with debounced input
 - **📊 Advanced Sorting** - Sort by company name or industry (A-Z, Z-A)
+- **🔐 Authentication** - Secure email/password login with Supabase Auth
+- **📋 Job Tracking** - Track application status (seeking referral, applied, interviewing, etc.)
+- **👤 User Management** - Personal job application dashboard
+- **🔒 Protected Routes** - Add company and job tracking require authentication
 - **📱 Responsive Design** - Works seamlessly on desktop, tablet, and mobile
 - **⚡ Performance Optimized** - 10-minute localStorage caching with smart invalidation
 - **📄 Pagination** - Efficient browsing of large datasets (20 companies per page)
 - **✏️ Inline Editing** - Edit company details directly in the list
-- **🎨 Modern UI** - Glass morphism design with smooth animations
+- **🎨 Modern UI** - Clean, professional design inspired by Y Combinator
 - **♿ Accessible** - Keyboard navigation and screen reader friendly
 
 ## 🛠️ Tech Stack
@@ -55,6 +59,7 @@ npm run dev
 ### 2. Run Database Schema
 ```sql
 -- Copy and run the contents of database-schema.sql in Supabase SQL Editor
+-- Then run job-tracking-schema.sql for job tracking functionality
 ```
 
 ### 3. Configure Environment
@@ -75,17 +80,40 @@ companies (
   created_at: timestamp
   updated_at: timestamp
 )
+
+job_applications (
+  id: bigint (Primary Key)
+  user_id: uuid (Foreign Key to auth.users)
+  company_id: bigint (Foreign Key to companies)
+  status: text (seeking_referral, applied, interviewing, offer, rejected, withdrawn)
+  position: text (Optional)
+  notes: text (Optional)
+  applied_date: date (Optional)
+  created_at: timestamp
+  updated_at: timestamp
+)
 ```
 
 ## 🎯 Usage
 
+### Authentication
+- Sign up with email/password or sign in to existing account
+- Access protected features like job tracking and adding companies
+
 ### Search Companies
+- Browse companies on the homepage
 - Type in the search bar to find companies by name, industry, or location
 - Results update automatically with 300ms debounce
 - Use sorting dropdown to organize results
 
-### Add New Company
-- Click "Add Company" in navigation
+### Job Tracking (Authenticated Users)
+- Click the eye icon on any company to start tracking
+- Visit "My Jobs" to manage application status
+- Update status: Seeking Referral → Applied → Interviewing → Offer/Rejected
+- Add notes and position details
+
+### Add New Company (Authenticated Users)
+- Navigate to "Add Company" (requires login)
 - Fill required fields: Company Name and Career URL
 - Optional: Add industry and headquarters
 
@@ -130,18 +158,26 @@ npm run build
 src/
 ├── components/          # Reusable Vue components
 │   ├── SearchBar.vue   # Search input with debouncing
-│   ├── CompanyList.vue # Company display with editing
+│   ├── CompanyList.vue # Company display with job tracking
 │   └── CompanyControls.vue # Sorting and pagination
 ├── composables/         # Vue composition functions
-│   └── useCompanies.ts # Companies state management
+│   ├── useCompanies.ts # Companies state management
+│   ├── useAuth.ts      # Authentication state
+│   └── useJobTracking.ts # Job tracking state
 ├── pages/              # Route components
-│   ├── SearchPage.vue  # Main search interface
-│   └── AddCompanyPage.vue # Add company form
+│   ├── SearchPage.vue  # Main search interface (homepage)
+│   ├── AddCompanyPage.vue # Add company form (auth required)
+│   ├── AuthPage.vue    # Sign in/up forms
+│   └── JobTrackingPage.vue # Job applications dashboard
 ├── services/           # API layer
 │   ├── companies.ts    # Company CRUD operations
+│   ├── jobTracking.ts  # Job application operations
 │   └── supabaseClient.ts # Supabase configuration
 ├── types/              # TypeScript definitions
-└── router/             # Vue Router configuration
+│   ├── company.d.ts    # Company types
+│   └── jobTracking.d.ts # Job tracking types
+├── theme.ts            # Centralized theme configuration
+└── router/             # Vue Router with auth guards
 ```
 
 ## 🔧 Configuration
