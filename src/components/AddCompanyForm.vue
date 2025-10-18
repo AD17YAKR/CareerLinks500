@@ -1,62 +1,75 @@
 <template>
   <div class="add-form-container">
     <div class="form-header">
-      <h3>Add New Company</h3>
+      <h1>Add Company</h1>
       <p>Help expand our Fortune 500 career directory</p>
     </div>
     
     <form @submit.prevent="onSubmit" class="add-form">
-      <div class="form-group">
-        <label for="company-name">Company Name *</label>
-        <input
-          id="company-name"
-          v-model="name"
-          type="text"
-          placeholder="e.g., Apple Inc."
-          required
-          class="form-input"
-        />
-      </div>
-      
-      <div class="form-group">
-        <label for="career-url">Career Page URL *</label>
-        <input
-          id="career-url"
-          v-model="careerUrl"
-          type="url"
-          placeholder="https://careers.company.com"
-          required
-          class="form-input"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="industry">Industry</label>
-        <input
-          id="industry"
-          v-model="industry"
-          type="text"
-          placeholder="e.g., Technology, Healthcare"
-          class="form-input"
-        />
+      <div class="form-row">
+        <div class="form-group">
+          <label for="company-name">Company Name *</label>
+          <input
+            id="company-name"
+            v-model="name"
+            type="text"
+            placeholder="Apple Inc."
+            required
+            class="form-input"
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="career-url">Career Page URL *</label>
+          <input
+            id="career-url"
+            v-model="careerUrl"
+            type="url"
+            placeholder="https://careers.company.com"
+            required
+            :class="['form-input', { 'invalid': careerUrl && !isValidUrl }]"
+          />
+          <div v-if="careerUrl && !isValidUrl" class="field-error">
+            Please enter a valid URL
+          </div>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="headquarters">Headquarters</label>
-        <input
-          id="headquarters"
-          v-model="headquarters"
-          type="text"
-          placeholder="e.g., Cupertino, CA"
-          class="form-input"
-        />
+      <div class="form-row">
+        <div class="form-group">
+          <label for="industry">Industry</label>
+          <input
+            id="industry"
+            v-model="industry"
+            type="text"
+            placeholder="Technology"
+            class="form-input"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="headquarters">Headquarters</label>
+          <input
+            id="headquarters"
+            v-model="headquarters"
+            type="text"
+            placeholder="Cupertino, CA"
+            class="form-input"
+          />
+        </div>
       </div>
       
-      <button type="submit" :disabled="loading" class="submit-btn">
-        {{ loading ? 'Adding Company...' : 'Add Company' }}
-      </button>
+      <div class="form-actions">
+        <button type="submit" :disabled="loading || !canSubmit" class="submit-btn">
+          {{ loading ? 'Adding...' : 'Add Company' }}
+        </button>
+      </div>
       
-      <div v-if="error" class="error-message">
+      <div v-if="validationError" class="error-message">
+        {{ validationError }}
+      </div>
+      
+      <div v-else-if="error" class="error-message">
         {{ error }}
       </div>
     </form>
@@ -64,12 +77,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 const name = ref('')
 const careerUrl = ref('')
 const industry = ref('')
 const headquarters = ref('')
+const validationError = ref('')
 
 const emit = defineEmits<{
   add: [data: { name: string; career_url: string; industry?: string; headquarters?: string }]
@@ -80,118 +94,183 @@ defineProps<{
   error: string | null
 }>()
 
-const onSubmit = () => {
-  if (name.value && careerUrl.value) {
-    emit('add', {
-      name: name.value,
-      career_url: careerUrl.value,
-      industry: industry.value || undefined,
-      headquarters: headquarters.value || undefined
-    })
-    name.value = ''
-    careerUrl.value = ''
-    industry.value = ''
-    headquarters.value = ''
+const isValidUrl = computed(() => {
+  if (!careerUrl.value) return true
+  try {
+    new URL(careerUrl.value)
+    return true
+  } catch {
+    return false
   }
+})
+
+const canSubmit = computed(() => {
+  return name.value.trim() && careerUrl.value.trim() && isValidUrl.value
+})
+
+const onSubmit = () => {
+  validationError.value = ''
+  
+  if (!name.value.trim()) {
+    validationError.value = 'Company name is required'
+    return
+  }
+  
+  if (!careerUrl.value.trim()) {
+    validationError.value = 'Career URL is required'
+    return
+  }
+  
+  if (!isValidUrl.value) {
+    validationError.value = 'Please enter a valid URL (e.g., https://careers.company.com)'
+    return
+  }
+  
+  emit('add', {
+    name: name.value.trim(),
+    career_url: careerUrl.value.trim(),
+    industry: industry.value.trim() || undefined,
+    headquarters: headquarters.value.trim() || undefined
+  })
+  
+  // Clear form on successful submission
+  name.value = ''
+  careerUrl.value = ''
+  industry.value = ''
+  headquarters.value = ''
 }
 </script>
 
 <style scoped>
 .add-form-container {
-  max-width: 500px;
+  max-width: 600px;
   margin: 0 auto;
 }
 
 .form-header {
-  text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 32px;
 }
 
-.form-header h3 {
-  color: var(--gray-900);
-  margin-bottom: 0.5rem;
-  font-size: 1.5rem;
+.form-header h1 {
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+  font-size: 28px;
   font-weight: 600;
 }
 
 .form-header p {
-  color: var(--gray-500);
+  color: var(--text-secondary);
   margin: 0;
+  font-size: 16px;
 }
 
 .add-form {
-  background: var(--glass-bg);
-  backdrop-filter: blur(10px);
-  padding: 2rem;
-  border-radius: 16px;
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--shadow-lg);
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 6px;
   font-weight: 500;
-  color: var(--gray-700);
+  color: var(--text-primary);
+  font-size: 14px;
 }
 
 .form-input {
-  width: 100%;
-  padding: 0.875rem;
-  border: 1px solid var(--glass-border);
-  border-radius: 10px;
-  font-size: 1rem;
-  background: var(--glass-bg);
-  backdrop-filter: blur(5px);
-  transition: all 0.3s ease;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 14px;
+  background: var(--bg-primary);
+  transition: all 0.2s;
+}
+
+.form-input::placeholder {
+  color: var(--text-muted);
 }
 
 .form-input:focus {
   outline: none;
   border-color: var(--primary);
-  background: var(--white);
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15), 0 4px 12px rgba(37, 99, 235, 0.1);
-  transform: translateY(-1px);
+  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
+}
+
+.form-input.invalid {
+  border-color: #dc2626;
+}
+
+.form-input.invalid:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.field-error {
+  color: #dc2626;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.form-actions {
+  margin-top: 24px;
 }
 
 .submit-btn {
-  width: 100%;
-  background: linear-gradient(135deg, var(--success), #22c55e);
-  color: var(--white);
+  background: var(--primary) !important;
+  color: white !important;
   border: none;
-  padding: 1rem 1.5rem;
-  border-radius: 10px;
+  padding: 12px 24px;
+  border-radius: var(--radius);
   cursor: pointer;
-  font-size: 1rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
 }
 
 .submit-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #15803d, #16a34a);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
+  background: var(--primary-hover) !important;
 }
 
 .submit-btn:disabled {
-  background: var(--gray-500);
+  background: var(--text-muted);
   cursor: not-allowed;
 }
 
 .error-message {
-  color: #dc2626;
-  background: rgba(254, 242, 242, 0.9);
-  backdrop-filter: blur(5px);
-  border: 1px solid #fecaca;
-  border-radius: 10px;
-  padding: 0.875rem;
-  margin-top: 1rem;
-  font-size: 0.875rem;
-  box-shadow: var(--shadow);
+  color: #c53030;
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-radius: var(--radius);
+  padding: 12px;
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .add-form {
+    padding: 24px;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .form-header h1 {
+    font-size: 24px;
+  }
 }
 </style>

@@ -9,7 +9,7 @@
       </select>
     </div>
     
-    <div v-if="totalPages > 1" class="pagination">
+    <div v-if="showPagination !== false && totalPages > 1" class="pagination">
       <button @click="$emit('page', currentPage - 1)" :disabled="currentPage === 1" class="page-btn">‹</button>
       <span class="page-info">{{ currentPage }} / {{ totalPages }}</span>
       <button @click="$emit('page', currentPage + 1)" :disabled="currentPage === totalPages" class="page-btn">›</button>
@@ -25,6 +25,7 @@ const props = defineProps<{
   totalCount: number
   sortBy: string
   sortOrder: string
+  showPagination?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -48,52 +49,66 @@ watch(() => [props.sortBy, props.sortOrder], () => {
 <style scoped>
 .controls {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
-  gap: 1rem;
+  gap: 16px;
 }
 
 .sort-select {
-  padding: 0.5rem;
-  border: 1px solid var(--glass-border);
-  border-radius: 8px;
-  background: var(--glass-bg);
-  backdrop-filter: blur(5px);
-  font-size: 0.875rem;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-primary);
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
 }
 
 .pagination {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
 .page-btn {
-  background: var(--primary);
-  color: var(--white);
-  border: none;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  border-radius: var(--radius);
   cursor: pointer;
-  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: var(--bg-hover);
 }
 
 .page-btn:disabled {
-  background: var(--gray-300);
+  color: var(--text-muted);
   cursor: not-allowed;
 }
 
 .page-info {
-  font-size: 0.875rem;
-  color: var(--gray-700);
-  font-weight: 500;
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0 8px;
 }
 
 @media (max-width: 768px) {
   .controls {
     flex-direction: column;
     align-items: stretch;
+    gap: 12px;
+  }
+  
+  .sort-select {
+    width: 100%;
   }
 }
 </style>

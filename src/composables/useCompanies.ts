@@ -55,8 +55,9 @@ export function useCompanies() {
       
       setCache(cacheKey, { data: data || [], count: count || 0, timestamp: Date.now() })
     } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Search failed'
-      router.push('/search')
+      error.value = err instanceof Error ? err.message : 'Failed to load companies. Please try again.'
+      companies.value = []
+      totalCount.value = 0
     } finally {
       loading.value = false
     }
@@ -75,8 +76,8 @@ export function useCompanies() {
       if (addError) throw addError
       clearCache() // Clear cache when adding company
     } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Add failed'
-      router.push('/search')
+      error.value = err instanceof Error ? err.message : 'Failed to add company. Please check your input and try again.'
+      throw err
     } finally {
       loading.value = false
     }
@@ -95,8 +96,8 @@ export function useCompanies() {
       if (updateError) throw updateError
       clearCache() // Clear cache when updating company
     } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Update failed'
-      router.push('/search')
+      error.value = err instanceof Error ? err.message : 'Failed to update company. Please try again.'
+      throw err
     } finally {
       loading.value = false
     }

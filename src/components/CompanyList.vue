@@ -6,7 +6,11 @@
     </div>
     
     <div v-else-if="companies.length === 0" class="empty-state">
-      <p>No companies found</p>
+      <svg viewBox="0 0 20 20" fill="currentColor" class="empty-icon">
+        <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+      </svg>
+      <h3>No companies found</h3>
+      <p>Try adjusting your search terms or browse all companies</p>
     </div>
     
     <div v-else :class="viewMode === 'list' ? 'companies-list' : 'companies-grid'">
@@ -27,19 +31,21 @@
         </div>
         <div v-else class="company-content">
           <div class="company-info">
-            <h4>{{ company.name }}</h4>
-            <p v-if="company.industry" class="company-industry">{{ company.industry }}</p>
-            <p v-if="company.headquarters" class="company-location">{{ company.headquarters }}</p>
+            <h3 class="company-name">{{ company.name }}</h3>
+            <div class="company-meta">
+              <span v-if="company.industry" class="meta-item">{{ company.industry }}</span>
+              <span v-if="company.headquarters" class="meta-item">{{ company.headquarters }}</span>
+            </div>
           </div>
           <div class="company-actions">
-            <button @click="startEdit(company)" class="edit-btn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="m18 2 4 4-14 14H4v-4L18 2z"/>
-                <path d="M14.5 5.5 18.5 9.5"/>
+            <button @click="startEdit(company)" class="edit-btn" title="Edit company">
+              <svg viewBox="0 0 20 20" fill="currentColor">
+                <path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z" />
+                <path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z" />
               </svg>
             </button>
             <a :href="company.career_url" target="_blank" class="career-link">
-              View Careers
+              View Jobs
             </a>
           </div>
         </div>
@@ -95,23 +101,226 @@ const cancelEdit = () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 3rem 1rem;
+  padding: 60px 20px;
   text-align: center;
-  color: var(--gray-500);
+  color: var(--text-muted);
+}
+
+.empty-state .empty-icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px 0;
+  color: var(--text-primary);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 14px;
 }
 
 .loading-spinner {
-  width: 24px;
-  height: 24px;
-  border: 2px solid var(--gray-200);
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border);
   border-top: 2px solid var(--primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-bottom: 1rem;
+  margin-bottom: 12px;
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+.companies-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+
+.companies-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.company-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  transition: all 0.2s;
+}
+
+.company-row {
+  background: var(--bg-primary);
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.company-card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-hover);
+}
+
+.company-row:hover {
+  background: var(--bg-hover);
+}
+
+.company-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  gap: 16px;
+}
+
+.company-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.company-name {
+  margin: 0 0 8px 0;
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.company-row .company-name {
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.company-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.company-row .company-meta {
+  gap: 8px;
+}
+
+.meta-item {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.company-row .meta-item {
+  font-size: 13px;
+}
+
+.company-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.edit-btn {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  padding: 6px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.edit-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.career-link {
+  background: var(--primary);
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  transition: all 0.2s;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.company-row .career-link {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.career-link:hover {
+  background: var(--primary-hover);
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.edit-input {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 14px;
+  background: var(--bg-primary);
+}
+
+.edit-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
+}
+
+.edit-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.save-btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.cancel-btn {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 13px;
 }
 
 @media (max-width: 768px) {
@@ -122,219 +331,21 @@ const cancelEdit = () => {
   .company-row {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.75rem;
-  }
-}
-
-.companies-grid {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-}
-
-.companies-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.company-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  padding: 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow-lg);
-}
-
-.company-row {
-  background: var(--glass-bg);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--glass-border);
-  border-radius: 10px;
-  padding: 1rem 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow);
-}
-
-.company-card:hover,
-.company-row:hover {
-  border-color: var(--primary);
-  background: var(--white);
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(37, 99, 235, 0.15);
-}
-
-.company-info {
-  flex: 1;
-}
-
-.company-info h4 {
-  margin: 0 0 0.5rem 0;
-  color: var(--gray-900);
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-.company-row .company-info h4 {
-  margin: 0 0 0.25rem 0;
-  font-size: 1rem;
-}
-
-.company-industry {
-  margin: 0 0 0.25rem 0;
-  color: var(--gray-700);
-  font-size: 0.875rem;
-}
-
-.company-row .company-industry {
-  margin: 0;
-  display: inline;
-}
-
-.company-row .company-industry::before {
-  content: ' • ';
-  color: var(--gray-400);
-}
-
-.company-location {
-  margin: 0;
-  color: var(--gray-500);
-  font-size: 0.875rem;
-}
-
-.company-row .company-location {
-  display: inline;
-}
-
-.company-row .company-location::before {
-  content: ' • ';
-  color: var(--gray-400);
-}
-
-.career-link {
-  background: linear-gradient(135deg, var(--success), #22c55e);
-  color: var(--white);
-  text-decoration: none;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
-}
-
-.company-row .career-link {
-  padding: 0.375rem 0.75rem;
-  font-size: 0.875rem;
-}
-
-.career-link:hover {
-  background: linear-gradient(135deg, #15803d, #16a34a);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
-}
-
-.company-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  width: 100%;
-}
-
-.company-actions {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.edit-btn {
-  background: var(--primary);
-  color: var(--white);
-  border: none;
-  padding: 0.5rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.edit-btn svg {
-  width: 16px;
-  height: 16px;
-}
-
-.edit-btn:hover {
-  background: var(--primary-light);
-  transform: translateY(-1px);
-}
-
-.edit-form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  width: 100%;
-}
-
-.edit-input {
-  padding: 0.5rem;
-  border: 1px solid var(--gray-300);
-  border-radius: 6px;
-  font-size: 0.875rem;
-  background: var(--white);
-}
-
-.edit-input:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
-}
-
-.edit-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.save-btn {
-  background: var(--success);
-  color: var(--white);
-  border: none;
-  padding: 0.375rem 0.75rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.cancel-btn {
-  background: var(--gray-500);
-  color: var(--white);
-  border: none;
-  padding: 0.375rem 0.75rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-@media (max-width: 768px) {
-  .company-actions {
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: stretch;
+    gap: 12px;
   }
   
-  .edit-actions {
+  .company-content {
     flex-direction: column;
+    gap: 12px;
+  }
+  
+  .company-actions {
+    align-self: stretch;
+  }
+  
+  .career-link {
+    text-align: center;
+    flex: 1;
   }
 }
 </style>

@@ -30,19 +30,17 @@ const handleAdd = async (data: { name: string; career_url: string; industry?: st
 .add-page {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 20px;
 }
 
 .section {
-  background: var(--white);
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: var(--shadow);
+  background: var(--bg-primary);
+  padding: 40px 0;
 }
 
 @media (max-width: 768px) {
   .section {
-    padding: 1.5rem;
+    padding: 20px 0;
   }
 }
 </style>
